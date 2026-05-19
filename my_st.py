@@ -59,3 +59,104 @@ $$\alpha + \beta = \gamma$$
 1. :red[숫자랑 점만 입력해도] 순서 있는 리스트로 인식  
 [링크 텍스트 네이버](https://www.naver.com)
 '''
+
+'# 🎥: 이미지 오디오 동영상'
+
+'#### :orange[이미지: st.image()]'
+st.image('./data/img_pythonlogo.png', caption='파이썬 로고', width=200)
+
+'#### :orange[오디오: st.audio()]'
+st.audio('./data/music.mp3', format="audio/mp3", loop=True)
+
+'#### :orange[동영상: st.video()]'
+#'rb'은 read binary의 약자, 바이너리 파일을 읽는 모드
+video_file = open('./data/sea_video.mp4', 'rb')
+video_bytes = video_file.read()
+
+st.video(video_bytes)
+
+st.divider()
+
+'# 💡콜아웃'
+
+'#### :orange[정보: st.info()]'
+st.info(
+    icon="ℹ️",
+    body='''
+    **정보 콜아웃**은 중요한 정보를 강조하는 데 사용됩니다.
+    - :red[빨간색 텍스트]
+        - :green[초록색 텍스트]
+    - :blue[파란색 텍스트]
+        - :yellow[노란색 텍스트]
+    - :orange[주황색 텍스트]
+        - :gray[회색 텍스트]
+'''
+)
+
+'#### :orange[경고: st.warning()]'
+st.warning('**경고 콜아웃**은 사용자에게 주의를 환기시키는 데 사용됩니다.', icon="⚠️")
+
+'#### :orange[오류: st.error()]'
+st.error('**오류 콜아웃**은 심각한 문제나 오류를 나타내는 데 사용됩니다.', icon="❌")
+
+'#### :orange[성공: st.success()]'
+st.success('**성공 콜아웃**은 작업이 성공적으로 완료되었음을 나타내는 데 사용됩니다.', icon="✅")
+
+st.divider()
+
+'# 📊 데이터 테이블'
+'#### :orange[Pandas DataFrame]'
+import pandas as pd
+df = pd.DataFrame(
+    {
+        '이름': ['Alice', 'Bob', 'Charlie'],
+        '나이': [25, 30, 35],
+        '도시': ['서울', '부산', '대구']
+    }
+)
+df  #데이터프레임 출력
+
+'''
+#### :blue[마크다운 테이블]
+| 이름 | 나이 | 도시 |
+|----|----|----|
+| Alice | 25 | 서울 |
+| Bob   | 30 | 부산 |
+| Charlie | 35 | 대구 |'''
+
+'#### :orange[지표(Metric)]'
+col1, col2, col3, col4 = st.columns(4) #4개의 컬럼 생성
+col1.metric("Temperature", "25 °C", "1.2 °C")
+col2.metric("Humidity", "60 %", "-5 %")
+col3.metric("Wind", "15 km/h", "2 km/h")
+col4.metric("Heart Rate", "88 bpm", "-7 bpm")
+
+st.metric(label="Stock Price", value="$120", delta="+5%")
+
+'# 📈 Streamlit 그래프'
+import pandas as pd
+import numpy as np
+
+chart_data = pd.DataFrame(
+    np.random.randn(20, 3),
+    columns=['A', 'B', 'C']
+    )
+
+'#### :orange[st.area_chart()]'
+st.area_chart(chart_data)
+
+'#### :orange[st.bar_chart()]'
+st.bar_chart(chart_data)
+
+'#### :orange[st.line_chart()]'
+st.line_chart(chart_data)
+
+'#### :orange[st.scatter_chart()]'
+st.scatter_chart(chart_data)
+
+'#### :orange[st.map()]'
+df = pd.DataFrame(
+    np.random.randn(100, 2) / [50, 50] + [37.5665, 126.978],
+    columns=['lat', 'lon']
+)
+st.map(df)
