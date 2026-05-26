@@ -169,7 +169,7 @@ st.divider()
 
 '# :blue[시각화 라이브러리]'
 
-'#### :orange[Matlotlib: st.pyplot()]'
+'#### :orange[Matplotlib: st.pyplot()]'
 import matplotlib.pyplot as plt
 import numpy as np
 
