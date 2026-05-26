@@ -37,6 +37,10 @@ with st.echo():
     #이 블록의 코드와 결과를 출력
     name = 'LeeSY'
     st.write('Hello, Streamlit! My name is', name)
+    123
+    'Hello, Streamlit! My name is', name
+    word = 'word'
+    word
 
 st.divider() #구분선
 
@@ -156,7 +160,22 @@ st.scatter_chart(chart_data)
 
 '#### :orange[st.map()]'
 df = pd.DataFrame(
-    np.random.randn(100, 2) / [50, 50] + [37.5665, 126.978],
+    np.random.randn(100, 2) / [100, 100] + [37.55, 126.92],
     columns=['lat', 'lon']
 )
 st.map(df)
+
+st.divider()
+
+'# :blue[시각화 라이브러리]'
+
+'#### :orange[Matlotlib: st.pyplot()]'
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+fig, ax = plt.subplots()
+ax.plot(x,y)
+st.pyplot(fig) # 차트 출력
