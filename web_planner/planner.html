@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>냥이의 메타케어 | 미룸 방지 & 생산성 플래너</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="미루기 대장 집사들을 위한 메타인지 기반 미룸 방지 및 생산성 향상 고양이 솔루션">
+    <!-- Google Fonts: Outfit & Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cozy: {
+                            bg: '#FAF6F0',
+                            card: '#FFFFFF',
+                            beige: '#F5EBE0',
+                            cream: '#FFE8D6',
+                            orange: '#F08A5D',
+                            yellow: '#F9AB55',
+                            brown: '#4A3E3D',
+                            lightbrown: '#7D6B69',
+                            mint: '#A8C3A0',
+                            rose: '#E5989B',
+                            hoverOrange: '#E07A4D',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS for specialized transitions and paw-print animations -->
+    <link rel="stylesheet" href="planner_style.css?v=2.0.3">
+</head>
+<body class="bg-cozy-bg text-cozy-brown h-full flex flex-col items-center justify-center font-sans antialiased p-0 sm:p-4 overflow-hidden">
+
+    <!-- App Wrapper (Mobile-like elegant card layout on desktop, full screen on mobile) -->
+    <div class="w-full max-w-md h-full sm:h-[840px] sm:max-h-[90vh] bg-cozy-card sm:rounded-[36px] sm:shadow-2xl flex flex-col relative overflow-hidden border border-cozy-beige/40">
+        
+        <!-- Paw animation container (for flying paw print effects) -->
+        <div id="paw-animation-container" class="absolute inset-0 pointer-events-none z-50"></div>
+
+        <!-- 1. Header (Cat Brand Panel) -->
+        <header class="bg-white border-b border-cozy-beige/50 px-5 py-4 flex items-center justify-between z-10">
+            <div class="flex items-center space-between gap-2.5">
+                <!-- Cute Cat Emoji/Avatar with slow pulse animation -->
+                <div class="w-10 h-10 rounded-full bg-cozy-cream flex items-center justify-center text-2xl shadow-sm logo-cat animate-pulse-slow">
+                    🐱
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-cozy-brown flex items-center gap-1.5 leading-tight">
+                        <span>냥이의 메타케어</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-cozy-cream text-cozy-orange font-semibold">집사 솔루션</span>
+                    </h1>
+                    <p class="text-[10px] text-cozy-lightbrown">미룸의 악순환을 끊어보자옹🐾</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-1">
+                <!-- AI Settings button (gear theme) -->
+                <button id="settings-btn" class="p-2 text-cozy-lightbrown hover:text-cozy-orange hover:bg-cozy-bg rounded-full transition-colors active:scale-95 duration-200" title="AI 설정">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </button>
+                <!-- Quick reset button to start fresh (cat paw theme) -->
+                <button id="reset-app-btn" class="p-2 text-cozy-lightbrown hover:text-cozy-orange hover:bg-cozy-bg rounded-full transition-colors active:scale-95 duration-200" title="처음부터 대화하기">
+                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 2. Main Content View Area (Smooth Fade transitions) -->
+        <main class="flex-1 overflow-hidden relative bg-[#FCFBF9]">
+            
+            <!-- [Tab 1: 셀프 문답] Screen -->
+            <section id="view-chat" class="tab-content active flex flex-col h-full overflow-y-auto">
+                <div class="p-5 flex-grow space-y-6 pb-20">
+                    <!-- Cat Guidance Header -->
+                    <div class="bg-gradient-to-r from-cozy-cream to-white rounded-2xl p-4 border border-cozy-cream/80 shadow-sm flex items-start gap-3">
+                        <div class="text-3xl mt-1 animate-pulse-slow">🐱</div>
+                        <div class="flex-grow">
+                            <span class="text-xs text-cozy-orange font-bold uppercase tracking-wider">냥박사의 메타인지 가이드</span>
+                            <p id="wizard-instruction" class="text-xs font-semibold text-cozy-brown leading-relaxed mt-1">
+                                "집사야, 딴짓의 고리를 끊기 위한 셀프 마음 문답을 시작해 보자옹. 차근차근 내 질문에 답하라냥! 🐾"
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step indicator -->
+                    <div class="flex items-center justify-between px-2">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-cozy-orange" id="wizard-step-label">1단계 / 4단계</span>
+                        </div>
+                        <!-- Progress bar dot system -->
+                        <div class="flex items-center gap-1.5" id="wizard-dots">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cozy-orange transition-all duration-300" data-step="1"></span>
+                            <span class="w-2 h-2 rounded-full bg-cozy-beige transition-all duration-300" data-step="2"></span>
+                            <span class="w-2 h-2 rounded-full bg-cozy-beige transition-all duration-300" data-step="3"></span>
+                            <span class="w-2 h-2 rounded-full bg-cozy-beige transition-all duration-300" data-step="4"></span>
+                        </div>
+                    </div>
+
+                    <!-- Wizard Step Content Wrapper -->
+                    <div class="bg-white rounded-3xl p-5 border border-cozy-beige/40 shadow-sm min-h-[320px] flex flex-col justify-between relative overflow-hidden">
+                        
+                        <!-- [Step 1: 딴짓 점검] -->
+                        <div id="wizard-step-1" class="wizard-step-container flex flex-col gap-4">
+                            <div class="space-y-1">
+                                <h3 class="text-xs font-bold text-cozy-brown flex items-center gap-1">
+                                    <span>1. 방금까지 무슨 딴짓을 하고 있었냥? 🙀</span>
+                                </h3>
+                                <p class="text-[10px] text-cozy-lightbrown">오늘 할 일을 미루고 나를 유혹했던 행동을 솔직하게 골라달라옹.</p>
+                            </div>
+                            <!-- Distraction options grid -->
+                            <div class="grid grid-cols-2 gap-2.5" id="distraction-options">
+                                <button type="button" class="distraction-btn flex flex-col items-center justify-center p-3 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-center text-[11px] font-bold gap-1.5 text-cozy-brown" data-value="유튜브/인스타 쇼츠 📱">
+                                    <span class="text-xl">📱</span>
+                                    <span>유튜브/쇼츠</span>
+                                </button>
+                                <button type="button" class="distraction-btn flex flex-col items-center justify-center p-3 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-center text-[11px] font-bold gap-1.5 text-cozy-brown" data-value="모바일/PC 게임 🎮">
+                                    <span class="text-xl">🎮</span>
+                                    <span>게임 한 판</span>
+                                </button>
+                                <button type="button" class="distraction-btn flex flex-col items-center justify-center p-3 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-center text-[11px] font-bold gap-1.5 text-cozy-brown" data-value="웹툰/피드 정독 🌐">
+                                    <span class="text-xl">🌐</span>
+                                    <span>웹툰/서핑</span>
+                                </button>
+                                <button type="button" class="distraction-btn flex flex-col items-center justify-center p-3 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-center text-[11px] font-bold gap-1.5 text-cozy-brown" data-value="카톡/수다/DM 💬">
+                                    <span class="text-xl">💬</span>
+                                    <span>카톡/수다</span>
+                                </button>
+                                <button type="button" class="distraction-btn flex flex-col items-center justify-center p-3 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-center text-[11px] font-bold gap-1.5 text-cozy-brown" data-value="누워서 뒹굴거리기 🥱">
+                                    <span class="text-xl">🥱</span>
+                                    <span>누워있기/침대</span>
+                                </button>
+                                <button type="button" class="distraction-btn flex flex-col items-center justify-center p-3 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-center text-[11px] font-bold gap-1.5 text-cozy-brown" data-value="기타">
+                                    <span class="text-xl">✍️</span>
+                                    <span>기타 입력</span>
+                                </button>
+                            </div>
+                            <!-- Other input container -->
+                            <div id="distraction-custom-container" class="hidden animate-chat-bubble mt-2">
+                                <input type="text" id="distraction-custom-input" class="w-full bg-cozy-bg border border-cozy-beige/50 text-cozy-brown placeholder-cozy-lightbrown/40 text-[11px] rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-cozy-orange/40 focus:bg-white transition-all duration-200" placeholder="어떤 딴짓을 하고 있었는지 적어보라냥...">
+                            </div>
+                        </div>
+
+                        <!-- [Step 2: 마음 상태] -->
+                        <div id="wizard-step-2" class="wizard-step-container flex flex-col gap-3.5 hidden">
+                            <div class="space-y-1">
+                                <h3 class="text-xs font-bold text-cozy-brown flex items-center gap-1">
+                                    <span>2. 그때 어떤 감정/생각 때문에 딴짓을 한 거냥? 🥺</span>
+                                </h3>
+                                <p class="text-[10px] text-cozy-lightbrown">미룬 것은 게을러서가 아닌 마음의 과부하 때문이다옹.</p>
+                            </div>
+                            <!-- Emotion option list -->
+                            <div class="flex flex-col gap-2" id="emotion-options">
+                                <button type="button" class="emotion-btn flex items-center gap-3 p-2.5 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-left text-xs text-cozy-brown font-bold" data-value="overwhelm">
+                                    <span class="text-xl">🥺</span>
+                                    <div class="flex flex-col">
+                                        <span>답답하고 막막함</span>
+                                        <span class="text-[9px] text-cozy-lightbrown font-medium mt-0.5">할 일이 너무 복잡하고 커서 어디서부터 손댈지 모르겠어옹.</span>
+                                    </div>
+                                </button>
+                                <button type="button" class="emotion-btn flex items-center gap-3 p-2.5 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-left text-xs text-cozy-brown font-bold" data-value="lazy">
+                                    <span class="text-xl">🥱</span>
+                                    <div class="flex flex-col">
+                                        <span>그냥 귀찮음 & 번아웃</span>
+                                        <span class="text-[9px] text-cozy-lightbrown font-medium mt-0.5">에너지가 바닥나 만사가 귀찮고 몸과 마음이 나른해옹.</span>
+                                    </div>
+                                </button>
+                                <button type="button" class="emotion-btn flex items-center gap-3 p-2.5 bg-cozy-bg/40 border border-cozy-beige/50 rounded-2xl hover:bg-cozy-bg/80 active:scale-98 transition-all duration-200 text-left text-xs text-cozy-brown font-bold" data-value="anxiety">
+                                    <span class="text-xl">😰</span>
+                                    <div class="flex flex-col">
+                                        <span>잘해야 한다는 불안감</span>
+                                        <span class="text-[9px] text-cozy-lightbrown font-medium mt-0.5">실패 없이 완벽하게 잘해야만 한다는 심리적 압박이 있어옹.</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- [Step 3: 진짜 목표와 첫 걸음] -->
+                        <div id="wizard-step-3" class="wizard-step-container flex flex-col gap-3.5 hidden">
+                            <div class="space-y-1">
+                                <h3 class="text-xs font-bold text-cozy-brown">
+                                    <span>3. 이제 시동을 다시 걸자옹! 😼</span>
+                                </h3>
+                                <p class="text-[10px] text-cozy-lightbrown">오늘 진짜 시작할 목표 하나와, 5분 안에 할 첫 삽을 적어봐라냥.</p>
+                            </div>
+                            
+                            <div class="space-y-2.5">
+                                <div class="space-y-1">
+                                    <label for="wizard-main-task" class="text-[9px] font-bold text-cozy-orange uppercase tracking-wide">Q1. 오늘 진짜 꼭 시작해야 할 일 1개</label>
+                                    <input type="text" id="wizard-main-task" class="w-full bg-cozy-bg border border-cozy-beige/50 text-cozy-brown placeholder-cozy-lightbrown/50 text-[11px] rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-cozy-orange/40 focus:bg-white transition-all duration-200" placeholder="예: 영어 에세이 쓰기, 방 정리하기" required autocomplete="off">
+                                </div>
+                                
+                                <div class="space-y-1">
+                                    <label for="wizard-first-step" class="text-[9px] font-bold text-cozy-orange uppercase tracking-wide">Q2. 5분 만에 끝낼 가장 가벼운 첫 단계</label>
+                                    <input type="text" id="wizard-first-step" class="w-full bg-cozy-bg border border-cozy-beige/50 text-cozy-brown placeholder-cozy-lightbrown/50 text-[11px] rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-cozy-orange/40 focus:bg-white transition-all duration-200" placeholder="예: 워드 켜고 빈 문서 만들기, 쓰레기통 비우기" required autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- [Step 4: 처방전 및 생성 완료] -->
+                        <div id="wizard-step-4" class="wizard-step-container flex flex-col gap-3 hidden">
+                            <!-- Doctor Rx Board -->
+                            <div class="border-2 border-dashed border-cozy-cream rounded-2xl p-3.5 bg-[#FFFBF8] relative flex flex-col gap-2 shadow-inner">
+                                <div class="text-[9px] bg-cozy-orange text-white font-bold px-2 py-0.5 rounded-full absolute -top-2.5 left-4 tracking-wider">
+                                    냥박사의 메타처방 🩺
+                                </div>
+                                
+                                <div class="grid grid-cols-[50px_1fr] text-xs gap-y-1 mt-1.5 border-b border-cozy-beige/50 pb-1.5">
+                                    <span class="text-cozy-lightbrown font-bold">환 자:</span>
+                                    <span class="text-cozy-brown font-semibold">집사님 🐾</span>
+                                    <span class="text-cozy-lightbrown font-bold">진단명:</span>
+                                    <span class="text-cozy-brown font-semibold" id="prescription-diagnosis">막막함으로 인한 유튜브 딴짓</span>
+                                </div>
+                                
+                                <div class="space-y-1 text-xs">
+                                    <div class="flex items-start gap-1">
+                                        <span class="text-cozy-orange">🎯</span>
+                                        <p class="text-cozy-brown leading-tight"><strong>최종 퀘스트:</strong> <span id="prescription-task">수학 숙제 풀기</span></p>
+                                    </div>
+                                    <div class="flex items-start gap-1">
+                                        <span class="text-cozy-orange">👣</span>
+                                        <p class="text-cozy-brown leading-tight"><strong>첫 시동 단계:</strong> <span id="prescription-step">연습장 펴기</span></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-2 border border-cozy-beige/30 text-[10px] text-cozy-lightbrown italic leading-relaxed text-center" id="prescription-msg">
+                                    "집사야, 완벽하지 않아도 좋다옹! 가볍게 첫 삽만 뜨면 이미 절반은 이긴 것이다냥. 응원한다옹!"
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wizard Buttons Area -->
+                        <div class="flex items-center justify-between gap-3 mt-4 pt-2.5 border-t border-cozy-bg">
+                            <button type="button" id="wizard-prev-btn" class="px-3.5 py-2 bg-white hover:bg-cozy-beige/40 text-cozy-lightbrown border border-cozy-beige/70 text-xs font-bold rounded-xl transition-all duration-200 active:scale-95 flex items-center gap-1 hidden">
+                                이전 단계
+                            </button>
+                            <div class="flex-grow"></div>
+                            <button type="button" id="wizard-next-btn" class="px-4.5 py-2 bg-cozy-orange hover:bg-cozy-hoverOrange text-white text-xs font-bold rounded-xl shadow transition-all duration-200 active:scale-95 flex items-center gap-1 whitespace-nowrap shrink-0 opacity-50 pointer-events-none">
+                                다음 단계 🐾
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- [Tab 2: 할 일 목록] Screen -->
+            <section id="view-todo" class="tab-content flex flex-col h-full overflow-y-auto">
+                <div class="p-5 space-y-6 flex-grow pb-20">
+                    <!-- Goal Header Box -->
+                    <div class="bg-gradient-to-r from-cozy-cream to-white rounded-2xl p-4.5 border border-cozy-cream/80 shadow-sm flex items-start gap-3">
+                        <div class="text-3xl mt-1">🎯</div>
+                        <div class="flex-1">
+                            <span class="text-xs text-cozy-orange font-bold uppercase tracking-wider">오늘 진짜 완료해야 하는 할 일</span>
+                            <h2 id="todo-main-title" class="text-lg font-bold text-cozy-brown mt-0.5 break-words">
+                                아직 결정된 진짜 할 일이 없다냥.
+                            </h2>
+                            <p id="todo-sub-desc" class="text-xs text-cozy-lightbrown mt-1">
+                                SOS 대화를 완료하면 진짜 할 일이 이곳에 나타난다옹!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: 환경 세팅하기 -->
+                    <div class="bg-white rounded-2xl p-4.5 border border-cozy-beige/40 shadow-sm space-y-3.5">
+                        <div class="flex items-center gap-2 border-b border-cozy-bg pb-2">
+                            <span class="text-xs font-bold px-2 py-0.5 bg-cozy-beige text-cozy-brown rounded-md">1단계</span>
+                            <h3 class="text-sm font-bold text-cozy-brown">행동 환경 정돈하기</h3>
+                        </div>
+                        <div class="space-y-2.5">
+                            <label class="checkbox-card flex items-center gap-3 p-3 bg-cozy-bg/40 rounded-xl cursor-pointer hover:bg-cozy-bg/70 transition-colors">
+                                <input type="checkbox" id="setup-phone" class="w-4.5 h-4.5 accent-cozy-orange rounded cursor-pointer">
+                                <span class="text-xs text-cozy-brown select-none font-medium">스마트폰 뒤집어서 무음 모드로 놓기 📱</span>
+                            </label>
+                            <label class="checkbox-card flex items-center gap-3 p-3 bg-cozy-bg/40 rounded-xl cursor-pointer hover:bg-cozy-bg/70 transition-colors">
+                                <input type="checkbox" id="setup-tabs" class="w-4.5 h-4.5 accent-cozy-orange rounded cursor-pointer">
+                                <span class="text-xs text-cozy-brown select-none font-medium">지금 불필요한 크롬 브라우저 탭 끄기 💻</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: 5분 스타터 타이머 -->
+                    <div class="bg-white rounded-2xl p-4.5 border border-cozy-beige/40 shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-cozy-bg pb-2">
+                            <span class="text-xs font-bold px-2 py-0.5 bg-cozy-cream text-cozy-orange rounded-md">2단계</span>
+                            <h3 class="text-sm font-bold text-cozy-brown flex-1">눈 딱 감고 5분만 버티기</h3>
+                            <!-- Timer status light badge -->
+                            <span id="timer-status-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-cozy-bg text-cozy-lightbrown font-medium">대기중</span>
+                        </div>
+
+                        <!-- Timer Container with Mascot Speech bubble -->
+                        <div class="flex items-center justify-between gap-4 py-2">
+                            <!-- Mascot image with speech dialog -->
+                            <div class="flex flex-col items-center gap-1.5 w-18 text-center shrink-0">
+                                <div id="timer-mascot" class="text-4xl transition-transform duration-300">🐱</div>
+                                <span class="text-[10px] font-bold text-cozy-orange">냥박사</span>
+                            </div>
+                            <!-- Mascot Bubble -->
+                            <div class="flex-grow bg-cozy-cream/40 rounded-2xl p-3 border border-cozy-cream/60 relative speech-bubble-left">
+                                <p id="timer-speech" class="text-xs text-cozy-brown leading-relaxed select-none">
+                                    "집사야, 딱 5분만 눈 딱 감고 움직여보자옹. 시작 버튼을 누르라냥!"
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Timer Digital Face & Controls -->
+                        <div class="flex flex-col items-center justify-center bg-cozy-bg/30 rounded-2xl py-5 border border-cozy-beige/20 space-y-3">
+                            <div id="timer-display" class="text-4xl font-extrabold tracking-widest text-cozy-brown font-mono select-none">
+                                05:00
+                            </div>
+                            <div class="flex gap-2.5">
+                                <button id="timer-start" class="px-4 py-2 bg-cozy-orange hover:bg-cozy-hoverOrange text-white text-xs font-bold rounded-xl shadow transition-all duration-200 active:scale-95 flex items-center gap-1">
+                                    <i data-lucide="play" class="w-3.5 h-3.5"></i> 시작
+                                </button>
+                                <button id="timer-pause" class="px-4 py-2 bg-white hover:bg-cozy-beige/40 text-cozy-brown border border-cozy-beige/70 text-xs font-bold rounded-xl transition-all duration-200 active:scale-95 flex items-center gap-1 hidden">
+                                    <i data-lucide="pause" class="w-3.5 h-3.5"></i> 일시정지
+                                </button>
+                                <button id="timer-reset" class="px-4 py-2 bg-white hover:bg-cozy-beige/40 text-cozy-lightbrown border border-cozy-beige/70 text-xs font-bold rounded-xl transition-all duration-200 active:scale-95 flex items-center gap-1">
+                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 리셋
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: 세부 할 일 쪼개기 -->
+                    <div class="bg-white rounded-2xl p-4.5 border border-cozy-beige/40 shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-cozy-bg pb-2">
+                            <span class="text-xs font-bold px-2 py-0.5 bg-cozy-mint/20 text-cozy-mint border border-cozy-mint/20 rounded-md">3단계</span>
+                            <h3 class="text-sm font-bold text-cozy-brown">할 일 잘게 쪼개서 끝내기</h3>
+                        </div>
+
+                        <!-- Sub-tasks Container list -->
+                        <div id="subtasks-list" class="space-y-2">
+                            <!-- Dynamic sub-tasks checkboxes rendered here via JS -->
+                        </div>
+
+                        <!-- Add custom sub-task form -->
+                        <form id="add-subtask-form" class="flex items-center gap-2 mt-4">
+                            <input type="text" id="new-subtask-title" required
+                                   class="flex-grow bg-cozy-bg/50 border border-cozy-beige/50 text-cozy-brown placeholder-cozy-lightbrown/50 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-cozy-orange/40 focus:bg-white transition-all duration-200"
+                                   placeholder="세부 행동 입력 (예: 노트 열기)...">
+                            
+                            <select id="new-subtask-time" 
+                                    class="bg-cozy-bg/50 border border-cozy-beige/50 text-cozy-brown text-xs rounded-xl px-2 py-2.5 focus:outline-none focus:ring-1 focus:ring-cozy-orange/40 focus:bg-white transition-all duration-200 w-20 cursor-pointer">
+                                <option value="5">5분</option>
+                                <option value="10">10분</option>
+                                <option value="15" selected>15분</option>
+                                <option value="20">20분</option>
+                                <option value="30">30분</option>
+                            </select>
+                            
+                            <button type="submit" 
+                                    class="bg-cozy-brown hover:bg-[#3D3332] text-white text-xs font-bold rounded-xl px-3 py-2.5 shadow transition-all duration-200 active:scale-95 shrink-0 flex items-center justify-center">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- [Tab 3: 기록/분석] Screen -->
+            <section id="view-stats" class="tab-content flex flex-col h-full overflow-y-auto">
+                <div class="p-5 space-y-6 flex-grow pb-24">
+                    
+                    <!-- Weekly ESCAPE Status Dashboard -->
+                    <div class="bg-gradient-to-br from-[#FFF8F3] to-[#FFF0E6] rounded-2xl p-5 border border-cozy-cream shadow-sm flex justify-between items-center">
+                        <div class="space-y-1">
+                            <span class="text-[10px] text-cozy-orange font-bold uppercase tracking-wider">메타인지 생산성 리포트</span>
+                            <h3 class="text-sm font-bold text-cozy-brown leading-tight">이번 주 집사님의 미룸 탈출 신호</h3>
+                            <p class="text-[11px] text-cozy-lightbrown leading-tight">
+                                쇼츠나 딴짓 유혹으로 미룬 횟수다냥!
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <div class="flex items-baseline justify-end gap-0.5">
+                                <span id="stat-escape-count" class="text-3xl font-extrabold text-cozy-orange font-mono">0</span>
+                                <span class="text-xs font-bold text-cozy-brown">회</span>
+                            </div>
+                            <span class="text-[9px] bg-cozy-orange/10 text-cozy-orange font-semibold px-2 py-0.5 rounded-full mt-1 inline-block">스마트폰 유혹</span>
+                        </div>
+                    </div>
+
+                    <!-- Emotion Statistics Gauge bars -->
+                    <div class="bg-white rounded-2xl p-4.5 border border-cozy-beige/40 shadow-sm space-y-4">
+                        <h4 class="text-xs font-bold text-cozy-brown border-b border-cozy-bg pb-2 flex items-center gap-1.5">
+                            <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-cozy-orange"></i>
+                            <span>미룸의 원인이 되었던 감정/생각</span>
+                        </h4>
+
+                        <div class="space-y-3.5">
+                            <!-- Gauge 1 -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-cozy-brown font-medium flex items-center gap-1">🥺 답답하고 막막함</span>
+                                    <span id="emotion-overwhelm-pct" class="font-bold text-cozy-lightbrown font-mono">0%</span>
+                                </div>
+                                <div class="w-full bg-cozy-bg rounded-full h-3.5 overflow-hidden flex">
+                                    <div id="bar-overwhelm" class="bg-cozy-rose h-full rounded-full transition-all duration-500 w-0"></div>
+                                </div>
+                            </div>
+                            <!-- Gauge 2 -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-cozy-brown font-medium flex items-center gap-1">🥱 그냥 귀찮음</span>
+                                    <span id="emotion-lazy-pct" class="font-bold text-cozy-lightbrown font-mono">0%</span>
+                                </div>
+                                <div class="w-full bg-cozy-bg rounded-full h-3.5 overflow-hidden flex">
+                                    <div id="bar-lazy" class="bg-cozy-yellow h-full rounded-full transition-all duration-500 w-0"></div>
+                                </div>
+                            </div>
+                            <!-- Gauge 3 -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-cozy-brown font-medium flex items-center gap-1">😰 잘해야 한다는 불안감</span>
+                                    <span id="emotion-anxiety-pct" class="font-bold text-cozy-lightbrown font-mono">0%</span>
+                                </div>
+                                <div class="w-full bg-cozy-bg rounded-full h-3.5 overflow-hidden flex">
+                                    <div id="bar-anxiety" class="bg-cozy-orange h-full rounded-full transition-all duration-500 w-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-cozy-lightbrown text-center italic mt-2 leading-relaxed">
+                            "미루는 마음은 게을러서가 아니라 감정 조절이 안 돼서다옹. 자책하지 말아라냥!"
+                        </p>
+                    </div>
+
+                    <!-- Stamp Board (칭찬 스탬프 판) -->
+                    <div class="bg-white rounded-2xl p-4.5 border border-cozy-beige/40 shadow-sm space-y-3.5">
+                        <div class="flex justify-between items-center border-b border-cozy-bg pb-2">
+                            <h4 class="text-xs font-bold text-cozy-brown flex items-center gap-1.5">
+                                <i data-lucide="award" class="w-3.5 h-3.5 text-cozy-yellow"></i>
+                                <span>성공의 기록 스탬프 판</span>
+                            </h4>
+                            <span class="text-[10px] bg-cozy-cream text-cozy-orange font-bold px-2 py-0.5 rounded-full">
+                                <span id="stamp-count-text">0</span> / 12 완료
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-cozy-lightbrown leading-tight">
+                            5분 집중 완료 or 세부 할 일을 해결하면 발도장을 꾹 찍어준다옹!
+                        </p>
+
+                        <!-- 12 slots grid -->
+                        <div id="stamp-grid" class="grid grid-cols-4 gap-3 py-1">
+                            <!-- Dynamic slots rendered here by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 3. Bottom Fixed Tab Bar -->
+        <nav class="bg-white border-t border-cozy-beige/50 px-3 py-2 flex items-center justify-around z-20 shadow-lg">
+            
+            <!-- Tab button 1: 셀프 문답 -->
+            <button id="nav-btn-chat" data-tab="chat" 
+                    class="nav-tab-btn flex flex-col items-center justify-center gap-1 py-1.5 px-3 rounded-2xl flex-grow text-cozy-orange">
+                <i data-lucide="message-circle" class="w-5.5 h-5.5 transition-transform duration-200"></i>
+                <span class="text-[10px] font-bold tracking-tight">셀프 문답</span>
+            </button>
+
+            <!-- Tab button 2: 할 일 목록 -->
+            <button id="nav-btn-todo" data-tab="todo" 
+                    class="nav-tab-btn flex flex-col items-center justify-center gap-1 py-1.5 px-3 rounded-2xl flex-grow text-cozy-lightbrown hover:text-cozy-brown">
+                <i data-lucide="check-square" class="w-5.5 h-5.5 transition-transform duration-200"></i>
+                <span class="text-[10px] font-bold tracking-tight">할 일 목록</span>
+            </button>
+
+            <!-- Tab button 3: 기록/분석 -->
+            <button id="nav-btn-stats" data-tab="stats" 
+                    class="nav-tab-btn flex flex-col items-center justify-center gap-1 py-1.5 px-3 rounded-2xl flex-grow text-cozy-lightbrown hover:text-cozy-brown">
+                <i data-lucide="trending-up" class="w-5.5 h-5.5 transition-transform duration-200"></i>
+                <span class="text-[10px] font-bold tracking-tight">기록/분석</span>
+            </button>
+        </nav>
+
+        <!-- Custom Card Dialog Modal (For displaying cute cat stamp messages safely without native alert) -->
+        <div id="stamp-modal" class="modal-overlay absolute inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center px-6 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+            <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl border border-cozy-beige/40 text-center transform scale-90 transition-transform duration-300 relative space-y-4">
+                <div class="text-5xl mt-2 select-none animate-bounce" id="modal-cat-avatar">🐱</div>
+                <div class="space-y-1.5">
+                    <h5 class="text-sm font-bold text-cozy-orange" id="modal-stamp-title">냥이의 칭찬 편지</h5>
+                    <p class="text-xs text-cozy-lightbrown font-medium" id="modal-stamp-date">2026-06-07 12:00</p>
+                </div>
+                <div class="bg-cozy-bg/50 rounded-2xl p-4 border border-cozy-beige/30 min-h-20 flex items-center justify-center">
+                    <p class="text-xs text-cozy-brown leading-relaxed font-semibold italic break-words" id="modal-stamp-message">
+                        "집사야, 포기하지 않고 발자국을 찍어줘서 고맙다냥! 내 꾹꾹이를 보낸다냥🐾"
+                    </p>
+                </div>
+                <button id="close-modal-btn" class="w-full bg-cozy-brown hover:bg-[#3D3332] text-white text-xs font-bold py-3 rounded-xl transition-all duration-200 active:scale-98">
+                    닫기
+                </button>
+            </div>
+        </div>
+
+        <!-- AI Settings Modal -->
+        <div id="settings-modal" class="modal-overlay absolute inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center px-6 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+            <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl border border-cozy-beige/40 transform scale-90 transition-transform duration-300 relative space-y-4 text-left">
+                <div class="flex items-center justify-between border-b border-cozy-bg pb-2">
+                    <h5 class="text-sm font-bold text-cozy-brown flex items-center gap-1.5 font-bold">
+                        <i data-lucide="settings" class="w-4 h-4 text-cozy-orange"></i>
+                        <span>냥박사 AI 설정</span>
+                    </h5>
+                    <button id="close-settings-btn" class="text-cozy-lightbrown hover:text-cozy-orange">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" id="use-gemini-ai" class="w-4 h-4 accent-cozy-orange rounded">
+                        <span class="text-xs font-bold text-cozy-brown">실제 Gemini AI 대화 활성화</span>
+                    </label>
+                    <div id="api-key-container" class="space-y-1.5 hidden">
+                        <label class="text-[10px] font-bold text-cozy-lightbrown block">Gemini API Key</label>
+                        <input type="password" id="gemini-api-key" placeholder="AI Studio API 키 입력..."
+                               class="w-full bg-cozy-bg border border-cozy-beige/50 text-cozy-brown placeholder-cozy-lightbrown/40 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-cozy-orange/40 focus:bg-white transition-all duration-200">
+                        <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" 
+                           class="text-[9px] text-cozy-orange hover:underline flex items-center gap-0.5 mt-1 font-semibold">
+                            여기서 무료 API 키 발급 받기 🔗
+                        </a>
+                    </div>
+                </div>
+                <button id="save-settings-btn" class="w-full bg-cozy-orange hover:bg-cozy-hoverOrange text-white text-xs font-bold py-3 rounded-xl transition-all duration-200 active:scale-98">
+                    저장하기
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Application Script -->
+    <script src="planner_script.js?v=2.0.3"></script>
+</body>
+</html>

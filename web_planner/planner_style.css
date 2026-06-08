@@ -1,0 +1,214 @@
+/* 
+ * Cozy Cat Procrastination preventer styles
+ * Supporting animations, transitions, and custom UI components
+ */
+
+:root {
+    --cozy-bg: #FAF6F0;
+    --cozy-card: #FFFFFF;
+    --cozy-beige: #F5EBE0;
+    --cozy-cream: #FFE8D6;
+    --cozy-orange: #F08A5D;
+    --cozy-yellow: #F9AB55;
+    --cozy-brown: #4A3E3D;
+    --cozy-lightbrown: #7D6B69;
+    --cozy-mint: #A8C3A0;
+    --cozy-rose: #E5989B;
+}
+
+/* Slim scrollbars for cozy app-feel */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--cozy-beige);
+    border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cozy-cream);
+}
+
+/* SPA Tab Switching opacity transition */
+.tab-content {
+    display: none !important;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+.tab-content.active {
+    display: flex !important;
+    opacity: 1;
+}
+
+/* Chat bubble entrance animation */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.animate-chat-bubble {
+    animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Mascot Pulse animation */
+@keyframes slowPulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 2px 4px rgba(240, 138, 93, 0.15));
+    }
+    50% {
+        transform: scale(1.05);
+        filter: drop-shadow(0 4px 8px rgba(240, 138, 93, 0.3));
+    }
+}
+.animate-pulse-slow {
+    animation: slowPulse 3s ease-in-out infinite;
+}
+
+/* Mascot chat bubble tails */
+.speech-bubble-left::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: -8px;
+    border-width: 8px 8px 8px 0;
+    border-style: solid;
+    border-color: transparent rgba(255, 232, 214, 0.4) transparent transparent;
+    display: block;
+    width: 0;
+}
+
+/* Stamp wiggle animation when clicked */
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-8deg) scale(1.08); }
+    75% { transform: rotate(8deg) scale(1.08); }
+}
+.stamp-wiggle {
+    animation: wiggle 0.4s ease-in-out;
+}
+
+/* Flying Paw particles */
+@keyframes pawFly {
+    0% {
+        transform: translate(-50%, -50%) scale(0.6) translateY(0);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.3) translateY(-120px) translateX(var(--paw-random-x, 15px));
+        opacity: 0;
+    }
+}
+.paw-particle {
+    position: absolute;
+    pointer-events: none;
+    font-size: 1.5rem;
+    animation: pawFly 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    z-index: 9999;
+}
+
+/* Cozy Custom styling for buttons and tabs */
+.nav-tab-btn {
+    transition: all 0.25s ease-in-out;
+    background: transparent;
+}
+.nav-tab-btn.active {
+    background-color: var(--cozy-cream);
+    color: var(--cozy-orange) !important;
+}
+
+/* Stamp layout styles */
+.stamp-slot {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #E6DEC9;
+    border-radius: 1.25rem;
+    background-color: #FAF6F0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 1.4rem;
+}
+.stamp-slot:hover {
+    border-color: var(--cozy-orange);
+    background-color: #FFFDF9;
+}
+.stamp-slot.filled {
+    border-style: solid;
+    border-color: var(--cozy-cream);
+    background-color: #FFF3EB;
+    box-shadow: inset 0 -3px 0 rgba(240, 138, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* Checkbox strikethrough transition */
+.task-checked-text {
+    position: relative;
+    color: var(--cozy-lightbrown);
+    opacity: 0.65;
+    text-decoration: line-through;
+    transition: all 0.25s ease;
+}
+.task-normal-text {
+    color: var(--cozy-brown);
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+/* Custom styles for select and tag items */
+.chat-tag-btn {
+    transition: all 0.2s ease;
+}
+.chat-tag-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Typing indicator dot animation */
+@keyframes dotBlink {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+}
+.typing-dot {
+    animation: dotBlink 1.2s infinite;
+}
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Wizard Buttons selection states */
+.distraction-btn, .emotion-btn {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.distraction-btn.selected, .emotion-btn.selected {
+    background-color: #FFF1E6 !important;
+    border-color: var(--cozy-orange) !important;
+    color: var(--cozy-orange) !important;
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(240, 138, 93, 0.12);
+}
+.distraction-btn.selected span.text-2xl, .emotion-btn.selected span.text-xl {
+    animation: wiggle 0.4s ease-in-out;
+}
+
+/* Wizard step container transitions */
+.wizard-step-container {
+    opacity: 1;
+    transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+}
+.wizard-step-container.hidden {
+    display: none !important;
+    opacity: 0;
+    transform: translateY(8px);
+}
