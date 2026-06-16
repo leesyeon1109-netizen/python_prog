@@ -1,4 +1,6 @@
 # app.py -- 우리 반 성적 분석 대시보드 (화면)
+import json
+import os
 import streamlit as st
 from utils import (total_score, average_score, to_grade, grade_to_gpa,
                    subject_average, subject_top, grade_distribution,
@@ -6,22 +8,35 @@ from utils import (total_score, average_score, to_grade, grade_to_gpa,
 
 st.set_page_config(page_title="성적 분석 대시보드", layout="wide")
 
-# 상단 배너 이미지 (banner.png 파일을 함께 둘 것)
-# BUG 9 수정: width="stretch" → use_container_width=True (Streamlit은 width에 문자열 미지원)
 st.image("banner.png", use_container_width=True)
 st.title("우리 반 성적 분석 대시보드")
 
 SUBJECTS = ["국어", "영어", "수학"]
+DATA_FILE = "students.json"  # 학생 데이터를 저장할 파일
 
-# 처음 실행 시 샘플 학생 데이터를 세션에 넣어 둔다. (다시 실행돼도 유지)
+SAMPLE_STUDENTS = [
+    {"이름": "김민준", "국어": 92,  "영어": 85, "수학": 78},
+    {"이름": "이서연", "국어": 88,  "영어": 90, "수학": 95},
+    {"이름": "박도윤", "국어": 60,  "영어": 55, "수학": 72},
+    {"이름": "최지우", "국어": 100, "영어": 80, "수학": 90},
+    {"이름": "정하준", "국어": 45,  "영어": 60, "수학": 58},
+]
+
+def load_students():
+    """JSON 파일에서 학생 데이터 불러오기. 없으면 샘플 데이터 반환."""
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return SAMPLE_STUDENTS.copy()
+
+def save_students(students):
+    """학생 데이터를 JSON 파일에 저장."""
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(students, f, ensure_ascii=False, indent=2)
+
+# 처음 실행 시 파일에서 불러와 세션에 저장
 if "students" not in st.session_state:
-    st.session_state.students = [
-        {"이름": "김민준", "국어": 92,  "영어": 85, "수학": 78},
-        {"이름": "이서연", "국어": 88,  "영어": 90, "수학": 95},
-        {"이름": "박도윤", "국어": 60,  "영어": 55, "수학": 72},
-        {"이름": "최지우", "국어": 100, "영어": 80, "수학": 90},
-        {"이름": "정하준", "국어": 45,  "영어": 60, "수학": 58},
-    ]
+    st.session_state.students = load_students()
 
 students = st.session_state.students
 
@@ -34,9 +49,9 @@ with tab1:
     kor = st.number_input("국어", 0, 100, 0)
     eng = st.number_input("영어", 0, 100, 0)
     mat = st.number_input("수학", 0, 100, 0)
-    # BUG 6 수정: if st.button("추가") → if st.button("추가"): (콜론 누락 → SyntaxError)
     if st.button("추가"):
         students.append({"이름": name, "국어": kor, "영어": eng, "수학": mat})
+        save_students(students)  # 파일에 저장
         st.success(f"{name} 학생을 추가했습니다.")
 
 # --- 상단 요약 지표 ---
@@ -73,8 +88,6 @@ with tab3:
         subject = SUBJECTS[i]
         with cols[i]:
             st.subheader(subject)
-            # BUG 7 수정: "평균: " + subject_average(...) → f-string 사용
-            # (float를 str에 + 연산하면 TypeError)
             st.write(f"평균: {subject_average(students, subject):.2f}")
             st.write(f"최고: {subject_top(students, subject)}")
 
@@ -95,7 +108,6 @@ with tab4:
     st.table(rank_table)
 
     st.header("학점 분포")
-    # BUG 8 수정: grade_distribution(studets) → grade_distribution(students) (오타 → NameError)
     dist = grade_distribution(students)
     dist_data = [{"학점": g, "인원": dist[g]} for g in ["A", "B", "C", "D", "F"]]
     st.bar_chart(dist_data, x="학점", y="인원", horizontal=True, height=400)
